@@ -1,3 +1,5 @@
+using AdsPlatformsAPI.Filters;
+
 namespace AdsPlatformsAPI
 {
     public class Program
@@ -5,9 +7,12 @@ namespace AdsPlatformsAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var app = builder.Build();
 
-            app.MapGet("/", () => "Hello World!");
+            builder.Services.AddControllers(
+                options => options.Filters.Add<ExceptionFilter>());
+
+            var app = builder.Build();
+            app.MapControllers();
 
             app.Run();
         }
