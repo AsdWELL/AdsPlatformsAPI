@@ -4,7 +4,7 @@ using AdsPlatformsAPI.Repositories.Interfaces;
 
 namespace AdsPlatformsAPI.Repositories
 {
-    public class AdsLocationsLocalRepository : IAdsLocationsRepository
+    public partial class AdsLocationsLocalRepository : IAdsLocationsRepository
     {
         private LocationNode _root;
 
@@ -13,14 +13,17 @@ namespace AdsPlatformsAPI.Repositories
             _root = new LocationNode() { Location = "root" };
         }
 
+        [System.Text.RegularExpressions.GeneratedRegex(@"^(/\w+)+$")]
+        private static partial System.Text.RegularExpressions.Regex LocationsRegex();
+
         private string[] SplitLocationIntoAreas(string location)
         {
-            return location.Split('/', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            return location.Split('/', StringSplitOptions.TrimEntries);
         }
 
         private string[] SplitLocationsLineIntoLocations(string locationsLine)
         {
-            return locationsLine.Split(',', StringSplitOptions.TrimEntries);
+            return locationsLine.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         }
 
         private (string platformName, string[] locations) SplitLineIntoPlatformNameAndLocations(string line)
@@ -57,10 +60,10 @@ namespace AdsPlatformsAPI.Repositories
 
                 foreach (var location in locations)
                 {
-                    var locationAreas = SplitLocationIntoAreas(location);
+                    if (!LocationsRegex().IsMatch(location))
+                        throw new InvalidLineFormatException(line, $"Неверный формат локации для {platformName}. Формат: /локация/локация");
 
-                    if (locationAreas.Length == 0)
-                        throw new InvalidLineFormatException(line, $"Площадка {platformName} содержит пустую локацию.");
+                    var locationAreas = SplitLocationIntoAreas(location);
 
                     var currentNode = _root;
 
