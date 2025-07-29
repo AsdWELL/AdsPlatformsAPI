@@ -1,9 +1,10 @@
 ﻿using AdsPlatformsAPI.Repositories;
 using AdsPlatformsAPI.Repositories.Interfaces;
 using AdsPlatformsAPI.Services;
+using AdsPlatformsAPI.Services.Interfaces;
 using Microsoft.OpenApi.Models;
 
-namespace AdsPlatformsAPI
+namespace AdsPlatformsAPI.Extensions
 {
     public static class ServiceCollectionExtension
     {
@@ -14,7 +15,9 @@ namespace AdsPlatformsAPI
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            return services.AddScoped<IAdsPlatformsService, AdsPlatformsService>();
+            return services
+                .AddScoped<IAdsPlatformsService, AdsPlatformsService>()
+                .AddScoped<IParsingService, ParsingService>();
         }
 
         public static IServiceCollection AddSwagger(this IServiceCollection services)

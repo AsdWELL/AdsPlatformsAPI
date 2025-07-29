@@ -1,9 +1,11 @@
-﻿namespace AdsPlatformsAPI.Repositories.Interfaces
+﻿using AdsPlatformsAPI.Models;
+
+namespace AdsPlatformsAPI.Repositories.Interfaces
 {
     public interface IAdsLocationsRepository
     {
-        Task LoadLocations(string rawFile);
+        Task LoadLocations(LocationNode locationTreeRoot);
 
-        Task<IEnumerable<string>> GetPlatformsByLocation(string location);
+        Task<List<string>> GetPlatformsByLocationAreas(IEnumerable<string> locationAreas);
     }
 }

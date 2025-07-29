@@ -1,17 +1,29 @@
 ﻿using AdsPlatformsAPI.Repositories.Interfaces;
+using AdsPlatformsAPI.Services.Interfaces;
 
 namespace AdsPlatformsAPI.Services
 {
-    public class AdsPlatformsService(IAdsLocationsRepository repository) : IAdsPlatformsService
+    public class AdsPlatformsService(
+        IAdsLocationsRepository locationsRepository,
+        IParsingService parsingService) : IAdsPlatformsService
     {
-        public Task LoadLocations(string rawFile)
+        public async Task LoadLocations(IFormFile file)
         {
-            return repository.LoadLocations(rawFile);
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            {
+                var content = await reader.ReadToEndAsync();
+
+                var locationTreeRoot = await parsingService.ParseFileToLocationsTree(content);
+
+                await locationsRepository.LoadLocations(locationTreeRoot);
+            }
         }
 
-        public Task<IEnumerable<string>> GetPlatformsByLocation(string location)
+        public async Task<List<string>> GetPlatformsByLocation(string location)
         {
-            return repository.GetPlatformsByLocation(location);
+            var locationAreas = await parsingService.ParseLocationToAreas(location);
+
+            return await locationsRepository.GetPlatformsByLocationAreas(locationAreas);
         }
     }
 }

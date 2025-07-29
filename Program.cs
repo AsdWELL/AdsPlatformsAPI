@@ -1,3 +1,4 @@
+using AdsPlatformsAPI.Extensions;
 using AdsPlatformsAPI.Filters;
 
 namespace AdsPlatformsAPI
