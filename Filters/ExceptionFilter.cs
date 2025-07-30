@@ -12,7 +12,7 @@ namespace AdsPlatformsAPI.Filters
 
             httpContext.Response.StatusCode = exception switch
             {
-                InvalidLineFormatException => StatusCodes.Status400BadRequest,
+                BadRequestException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
 

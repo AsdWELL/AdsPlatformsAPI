@@ -1,11 +1,17 @@
-﻿using AdsPlatformsAPI.Models;
+﻿using AdsPlatformsAPI.Exceptions;
+using AdsPlatformsAPI.Models;
 using AdsPlatformsAPI.Repositories.Interfaces;
 
 namespace AdsPlatformsAPI.Repositories
 {
     public class AdsLocationsLocalRepository : IAdsLocationsRepository
     {
-        private LocationNode _root;
+        private LocationNode? _root;
+
+        private bool IsLocationTreeCreated()
+        {
+            return _root != null;
+        }
 
         public Task LoadLocations(LocationNode locationTreeRoot)
         {
@@ -16,9 +22,12 @@ namespace AdsPlatformsAPI.Repositories
 
         public Task<List<string>> GetPlatformsByLocationAreas(IEnumerable<string> locationAreas)
         {
+            if (!IsLocationTreeCreated())
+                throw new LocationsFileNotUploadedException();
+
             var platforms = new HashSet<string>();
             
-            var currentNode = _root;
+            var currentNode = _root!;
 
             foreach (var area in locationAreas)
             {
